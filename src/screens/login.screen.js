@@ -56,6 +56,9 @@ const LoginScreen = ({ navigation }) => {
           borderRadius: 30,
           marginVertical: 10,
         }}
+        onPress={() => {
+          navigation.navigate("TabStack");
+        }}
       />
       <Button
         title={"Register"}
