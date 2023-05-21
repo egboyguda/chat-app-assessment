@@ -1,17 +1,23 @@
 import React, { useContext, useEffect } from "react";
-import { Text, View } from "react-native";
+import { FlatList, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import ChatMsg from "../components/chatMsg";
 import initializeSocket from "../api/socket.io";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Context as authContext } from "../context/authContext";
+import { Context as apiContext } from "../context/apiContext";
+import { ListItem } from "@rneui/themed";
 const MainScreen = ({ navigation }) => {
   const { state } = useContext(authContext);
+  const {
+    state: { chat },
+    getChatMsg,
+  } = useContext(apiContext);
   useEffect(() => {
     const socket = initializeSocket();
+    getChatMsg();
 
     // Additional event listeners or socket operations can be performed here
-    console.log();
     socket.on(state.userId, (message) => {
       console.log(message);
     });
@@ -20,13 +26,16 @@ const MainScreen = ({ navigation }) => {
       socket.disconnect();
     };
   }, []);
+
   return (
     <View>
-      <ChatMsg
-        goto={() => {
-          navigation.navigate("ChatBox");
-        }}
-      />
+      {chat ? (
+        <FlatList
+          data={Object.keys(chat)}
+          renderItem={({ item }) => <Text>{item}</Text>}
+          keyExtractor={(item) => item}
+        />
+      ) : null}
     </View>
   );
 };

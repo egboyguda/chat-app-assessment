@@ -6,6 +6,7 @@ import LoginStack from "./src/navigation/loginStack";
 import TabStack from "./src/navigation/tabStack";
 import ChatBox from "./src/screens/chatBox";
 import { Provider as AuthProvider } from "./src/context/authContext";
+import { Provider as ApiContext } from "./src/context/apiContext";
 const Stack = createNativeStackNavigator();
 App = () => {
   return (
@@ -24,8 +25,10 @@ App = () => {
 };
 export default () => {
   return (
-    <AuthProvider>
-      <App />
-    </AuthProvider>
+    <ApiContext>
+      <AuthProvider>
+        <App />
+      </AuthProvider>
+    </ApiContext>
   );
 };
