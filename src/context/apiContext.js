@@ -6,21 +6,34 @@ const chatReducer = (state, action) => {
     case "getchatMsg":
       return {
         ...state,
-        chat: action.payload.reduce((result, chat) => {
-          const { sender, ...rest } = chat;
-          const { username } = sender;
-
-          if (!result[username]) {
-            result[username] = [];
+        chat: action.payload.reduce((acc, item) => {
+          const senderId = item.sender._id;
+          if (!acc[senderId]) {
+            acc[senderId] = [];
           }
-
-          result[username].push({ ...rest });
-
-          return result;
+          acc[senderId].push(item);
+          return acc;
         }, {}),
       };
+    case "newMsg":
+      const { userId, message } = action.payload;
+      const newChat = { ...state.chat };
+
+      // Check if the user exists in the chat collection
+      if (newChat.hasOwnProperty(userId)) {
+        // User exists, push the new message to their array of messages
+        console.log(newChat);
+        newChat[userId] = [...newChat[userId], message];
+      } else {
+        // User doesn't exist, create a new array with the message
+        console.log(userId);
+        newChat[userId] = [message];
+      }
+
+      return { ...state, chat: newChat };
+
     default:
-      return states;
+      return state;
   }
 };
 
@@ -29,9 +42,14 @@ const getChatMsg = (dispatch) => async () => {
   const res = await url.get(`/chat?user=${user}`);
   dispatch({ type: "getchatMsg", payload: res.data });
 };
-
+const newMsg = (dispatch) => (data) => {
+  //console.log(data);
+  //console.log("***********************");
+  const userId = data.sender._id;
+  dispatch({ type: "newMsg", payload: { userId, message: data } });
+};
 export const { Context, Provider } = createDataContext(
   chatReducer,
-  { getChatMsg },
+  { getChatMsg, newMsg },
   { chat: null }
 );

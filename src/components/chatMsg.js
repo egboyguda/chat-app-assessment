@@ -1,26 +1,15 @@
 import React from "react";
 import { View, Text, Image, TouchableOpacity } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
-
-const ChatMsg = ({ goto }) => {
+import { ListItem } from "@rneui/themed";
+const ChatMsg = ({ item, msg }) => {
   return (
-    <TouchableOpacity
-      onPress={() => {
-        goto();
-      }}
-    >
-      <View
-        style={{
-          flexDirection: "row",
-        }}
-      >
-        <Image source={require("../../assets/user.png")} />
-        <View style={{ marginLeft: 10, marginTop: 10 }}>
-          <Text style={{ fontWeight: "bold" }}>USERNAME</Text>
-          <Text>latest msg</Text>
-        </View>
-      </View>
-    </TouchableOpacity>
+    <ListItem key={item} bottomDivider>
+      <ListItem.Content>
+        <ListItem.Title>{item}</ListItem.Title>
+        <ListItem.Subtitle>{msg}</ListItem.Subtitle>
+      </ListItem.Content>
+    </ListItem>
   );
 };
 export default ChatMsg;

@@ -7,11 +7,13 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Context as authContext } from "../context/authContext";
 import { Context as apiContext } from "../context/apiContext";
 import { ListItem } from "@rneui/themed";
+import { getLastMessage, getUsername } from "../utils/getlatestMsg";
 const MainScreen = ({ navigation }) => {
   const { state } = useContext(authContext);
   const {
     state: { chat },
     getChatMsg,
+    newMsg,
   } = useContext(apiContext);
   useEffect(() => {
     const socket = initializeSocket();
@@ -19,7 +21,8 @@ const MainScreen = ({ navigation }) => {
 
     // Additional event listeners or socket operations can be performed here
     socket.on(state.userId, (message) => {
-      console.log(message);
+      newMsg(message);
+      //console.log(message);
     });
     // Clean up the socket connection when the component unmounts
     return () => {
@@ -32,7 +35,12 @@ const MainScreen = ({ navigation }) => {
       {chat ? (
         <FlatList
           data={Object.keys(chat)}
-          renderItem={({ item }) => <Text>{item}</Text>}
+          renderItem={({ item }) => (
+            <ChatMsg
+              item={getUsername(chat[item])}
+              msg={getLastMessage(chat[item])}
+            />
+          )}
           keyExtractor={(item) => item}
         />
       ) : null}
