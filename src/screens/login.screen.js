@@ -1,10 +1,13 @@
 import { Button } from "@rneui/base";
 import { Input } from "@rneui/themed";
-import React from "react";
+import React, { useContext, useState } from "react";
 import { View, Text, StyleSheet, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-
+import { Context as authContext } from "../context/authContext";
 const LoginScreen = ({ navigation }) => {
+  const { state, signIn } = useContext(authContext);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   return (
     <SafeAreaView
       style={{
@@ -32,7 +35,9 @@ const LoginScreen = ({ navigation }) => {
           borderBottomWidth: 0,
           //paddingTop: 10,
         }}
-
+        onChangeText={(val) => {
+          setUsername(val);
+        }}
         //inputStyle={{ textAlignVertical: "center" }}
       />
       <Input
@@ -43,10 +48,14 @@ const LoginScreen = ({ navigation }) => {
           borderWidth: 1,
           height: 48,
         }}
+        onChangeText={(val) => {
+          setPassword(val);
+        }}
         inputContainerStyle={{
           borderBottomWidth: 0,
           //paddingTop: 10,
         }}
+        secureTextEntry
         //inputStyle={{ textAlignVertical: "center" }}
       />
       <Button
@@ -56,9 +65,7 @@ const LoginScreen = ({ navigation }) => {
           borderRadius: 30,
           marginVertical: 10,
         }}
-        onPress={() => {
-          navigation.navigate("TabStack");
-        }}
+        onPress={() => signIn({ username, password })}
       />
       <Button
         title={"Register"}

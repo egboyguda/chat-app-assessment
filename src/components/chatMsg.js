@@ -2,9 +2,13 @@ import React from "react";
 import { View, Text, Image, TouchableOpacity } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
 
-const ChatMsg = () => {
+const ChatMsg = ({ goto }) => {
   return (
-    <TouchableOpacity>
+    <TouchableOpacity
+      onPress={() => {
+        goto();
+      }}
+    >
       <View
         style={{
           flexDirection: "row",
