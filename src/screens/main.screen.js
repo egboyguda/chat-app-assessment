@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from "react";
-import { FlatList, Text, View } from "react-native";
+import { FlatList, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import ChatMsg from "../components/chatMsg";
 import initializeSocket from "../api/socket.io";
@@ -35,13 +35,14 @@ const MainScreen = ({ navigation }) => {
       {chat ? (
         <FlatList
           data={Object.keys(chat)}
+          keyExtractor={(item) => item}
           renderItem={({ item }) => (
             <ChatMsg
               item={getUsername(chat[item])}
               msg={getLastMessage(chat[item])}
+              chatmsg={item}
             />
           )}
-          keyExtractor={(item) => item}
         />
       ) : null}
     </View>

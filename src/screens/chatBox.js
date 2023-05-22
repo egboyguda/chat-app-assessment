@@ -1,43 +1,64 @@
-import React from "react";
+import React, { useContext } from "react";
 import {
   View,
   KeyboardAvoidingView,
   TouchableWithoutFeedback,
   Keyboard,
+  FlatList,
+  Text,
+  StyleSheet,
+  TextInput,
 } from "react-native";
 import { Input, Button } from "@rneui/themed";
 import { Ionicons } from "@expo/vector-icons";
+import Bubble from "../components/bubble";
+import { Context as ApiContext } from "../context/apiContext";
 //import { SafeAreaView } from "react-native-safe-area-context";
-const ChatBox = () => {
+const ChatBox = ({ route }) => {
+  const {
+    state: { chat },
+  } = useContext(ApiContext);
+  const { msg } = route.params;
+  console.log(msg);
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <KeyboardAvoidingView
-        style={{ flex: 1, justifyContent: "flex-end" }}
-        behavior="padding"
-      >
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            paddingHorizontal: 10,
-            paddingBottom: 10,
-          }}
-        >
-          <Input
-            placeholder="Type a message"
-            //value={message}
-            //onChangeText={setMessage}
-            containerStyle={{ flex: 1, marginRight: 10 }}
-          />
-          <Button
-            title=""
-            //onPress={handleSend}
-            buttonStyle={{ backgroundColor: "transparent" }}
-            icon={<Ionicons name="send" size={24} color="blue" />}
-          />
-        </View>
-      </KeyboardAvoidingView>
-    </TouchableWithoutFeedback>
+    <View style={styles.container}>
+      <FlatList
+        data={chat[msg].slice().reverse()}
+        keyExtractor={(item) => item._id.toString()}
+        renderItem={({ item }) => <Bubble message={item.message} />}
+        inverted
+      />
+      <View style={styles.inputContainer}>
+        <TextInput style={styles.input} placeholder="Type your message..." />
+        <Button title="Send" />
+      </View>
+    </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  bubble: {
+    padding: 10,
+    marginVertical: 5,
+    borderRadius: 10,
+    backgroundColor: "#F2F2F2",
+  },
+  inputContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 10,
+  },
+  input: {
+    flex: 1,
+    marginRight: 10,
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderWidth: 1,
+    borderColor: "#CCCCCC",
+    borderRadius: 10,
+  },
+});
 export default ChatBox;
