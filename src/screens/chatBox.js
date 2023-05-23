@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import {
   View,
   KeyboardAvoidingView,
@@ -19,12 +19,13 @@ const ChatBox = ({ route }) => {
     state: { chat },
   } = useContext(ApiContext);
   const { msg } = route.params;
-  console.log(msg);
+
+  //console.log(chat.find((item) => item._id === msg));
   return (
     <View style={styles.container}>
       <FlatList
-        data={chat[msg].slice().reverse()}
-        keyExtractor={(item) => item._id.toString()}
+        data={chat.find((item) => item._id === msg)?.conversation || []}
+        keyExtractor={(item) => item.timestamp}
         renderItem={({ item }) => <Bubble message={item.message} />}
         inverted
       />

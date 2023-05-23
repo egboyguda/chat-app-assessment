@@ -1,5 +1,5 @@
 export const getLastMessage = (messages) => {
-  //console.log(messages);
+  console.log(messages);
   if (messages.length > 0) {
     return messages[messages.length - 1].message;
   }
@@ -7,5 +7,6 @@ export const getLastMessage = (messages) => {
 };
 
 export const getUsername = (chat) => {
-  return chat[chat.length - 1].sender.username;
+  console.log(chat);
+  //return chat[0].conversation.username;
 };

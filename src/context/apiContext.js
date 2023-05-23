@@ -4,16 +4,10 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 const chatReducer = (state, action) => {
   switch (action.type) {
     case "getchatMsg":
+      //console.log(action.payload);
       return {
         ...state,
-        chat: action.payload.reduce((acc, item) => {
-          const senderId = item.sender._id;
-          if (!acc[senderId]) {
-            acc[senderId] = [];
-          }
-          acc[senderId].push(item);
-          return acc;
-        }, {}),
+        chat: action.payload,
       };
     case "newMsg":
       const { userId, message } = action.payload;
@@ -40,7 +34,8 @@ const chatReducer = (state, action) => {
 const getChatMsg = (dispatch) => async () => {
   const user = await AsyncStorage.getItem("userId");
   const res = await url.get(`/chat?user=${user}`);
-  dispatch({ type: "getchatMsg", payload: res.data });
+  //console.log(res.data);
+  dispatch({ type: "getchatMsg", payload: [...res.data] });
 };
 const newMsg = (dispatch) => (data) => {
   //console.log(data);
