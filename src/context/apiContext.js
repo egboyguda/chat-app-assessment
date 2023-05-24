@@ -10,21 +10,53 @@ const chatReducer = (state, action) => {
         chat: action.payload,
       };
     case "newMsg":
-      const { userId, message } = action.payload;
-      const newChat = { ...state.chat };
+      const newData = action.payload;
 
-      // Check if the user exists in the chat collection
-      if (newChat.hasOwnProperty(userId)) {
-        // User exists, push the new message to their array of messages
-        console.log(newChat);
-        newChat[userId] = [...newChat[userId], message];
+      const conversationIndex = state.chat.findIndex(
+        (conversation) => conversation._id === newData.sender._id
+      );
+
+      if (conversationIndex !== -1) {
+        // If the conversation exists, add the new message to it
+        return {
+          ...state,
+          chat: state.chat.map((conversation, index) => {
+            if (index === conversationIndex) {
+              return {
+                ...conversation,
+                conversation: [
+                  ...conversation.conversation,
+                  {
+                    sender: newData.sender.username,
+                    recipient: newData.recipient.username,
+                    message: newData.message,
+                    timestamp: newData.timestamp,
+                  },
+                ],
+              };
+            }
+            return conversation;
+          }),
+        };
       } else {
-        // User doesn't exist, create a new array with the message
-        console.log(userId);
-        newChat[userId] = [message];
-      }
+        // If the conversation does not exist, create a new entry
+        const newConversation = {
+          _id: newData.sender._id,
+          conversation: [
+            {
+              sender: newData.sender.username,
+              recipient: newData.recipient.username,
+              message: newData.message,
+              timestamp: newData.timestamp,
+            },
+          ],
+        };
 
-      return { ...state, chat: newChat };
+        return {
+          ...state,
+          chat: [...state.chat, newConversation],
+        };
+      }
 
     default:
       return state;
@@ -38,10 +70,10 @@ const getChatMsg = (dispatch) => async () => {
   dispatch({ type: "getchatMsg", payload: [...res.data] });
 };
 const newMsg = (dispatch) => (data) => {
-  //console.log(data);
+  console.log(data);
   //console.log("***********************");
   const userId = data.sender._id;
-  dispatch({ type: "newMsg", payload: { userId, message: data } });
+  dispatch({ type: "newMsg", payload: data });
 };
 export const { Context, Provider } = createDataContext(
   chatReducer,
