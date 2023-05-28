@@ -1,13 +1,14 @@
 import React from "react";
 import { View, Text, Image, TouchableOpacity } from "react-native";
-import { FontAwesome5 } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
 import { Avatar, ListItem } from "@rneui/themed";
 import { navigate } from "../navigationRes";
-const ChatMsg = ({ item, msg, chatmsg }) => {
+import { Ionicons } from "@expo/vector-icons";
+const ChatMsg = ({ item, msg, chatmsg, isContact, isAdd, add, isCon }) => {
   return (
     <TouchableOpacity
       onPress={() => {
-        navigate("ChatBox", { msg: chatmsg });
+        !isAdd ? navigate("ChatBox", { msg: chatmsg }) : add();
       }}
     >
       <ListItem key={item} bottomDivider>
@@ -24,8 +25,15 @@ const ChatMsg = ({ item, msg, chatmsg }) => {
           <ListItem.Title>{item}</ListItem.Title>
           <ListItem.Subtitle>{msg}</ListItem.Subtitle>
         </ListItem.Content>
+        {isContact ? (
+          <MaterialIcons name="sms" size={24} color="#00C4FF" />
+        ) : null}
+        {isAdd ? (
+          <Ionicons name="ios-person-add-outline" size={24} color="black" />
+        ) : null}
       </ListItem>
     </TouchableOpacity>
   );
 };
+
 export default ChatMsg;

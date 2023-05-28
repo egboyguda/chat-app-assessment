@@ -2,8 +2,11 @@ import createDataContext from "./createDataContext";
 import url from "../api/urls";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import initializeSocket from "../api/socket.io";
+import { navigate } from "../navigationRes";
 const chatReducer = (state, action) => {
   switch (action.type) {
+    case "getContact":
+      return { ...state, contact: action.payload };
     case "getchatMsg":
       //console.log(action.payload);
       return {
@@ -80,12 +83,24 @@ const chatReducer = (state, action) => {
   }
 };
 
+const addContact = (dispatch) => async (username) => {
+  console.log("called");
+  const res = await url.post(`/user/add`, { username });
+  navigate("Chat");
+};
+
+const getContact = (dispatch) => async () => {
+  const res = await url.get("/user/contact");
+  //console.log(res.data);
+  dispatch({ type: "getContact", payload: res.data });
+};
 const getChatMsg = (dispatch) => async () => {
   const user = await AsyncStorage.getItem("userId");
   const res = await url.get(`/chat?user=${user}`);
   //console.log(res.data);
   dispatch({ type: "getchatMsg", payload: [...res.data] });
 };
+
 const newMsg = (dispatch) => async (data) => {
   //console.log(data);
   const user = await AsyncStorage.getItem("userId");
@@ -93,6 +108,7 @@ const newMsg = (dispatch) => async (data) => {
   const userId = data.sender._id;
   dispatch({ type: "newMsg", payload: { data, user } });
 };
+
 const sendMsg = (dispatch) => async (receiver, msg) => {
   //console.log(msg);
   const socket = initializeSocket();
@@ -106,6 +122,6 @@ const sendMsg = (dispatch) => async (receiver, msg) => {
 };
 export const { Context, Provider } = createDataContext(
   chatReducer,
-  { getChatMsg, newMsg, sendMsg },
-  { chat: null }
+  { getChatMsg, newMsg, sendMsg, addContact, getContact },
+  { chat: null, contact: null }
 );
