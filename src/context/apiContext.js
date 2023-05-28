@@ -1,6 +1,7 @@
 import createDataContext from "./createDataContext";
 import url from "../api/urls";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import initializeSocket from "../api/socket.io";
 const chatReducer = (state, action) => {
   switch (action.type) {
     case "getchatMsg":
@@ -10,10 +11,12 @@ const chatReducer = (state, action) => {
         chat: action.payload,
       };
     case "newMsg":
-      const newData = action.payload;
+      const newData = action.payload.data;
 
       const conversationIndex = state.chat.findIndex(
-        (conversation) => conversation._id === newData.sender._id
+        (conversation) =>
+          conversation._id === newData.sender._id ||
+          conversation._id === newData.recipient._id
       );
 
       if (conversationIndex !== -1) {
@@ -22,6 +25,20 @@ const chatReducer = (state, action) => {
           ...state,
           chat: state.chat.map((conversation, index) => {
             if (index === conversationIndex) {
+              return {
+                ...conversation,
+                conversation: [
+                  ...conversation.conversation,
+                  {
+                    sender: newData.sender.username,
+                    recipient: newData.recipient.username,
+                    message: newData.message,
+                    timestamp: newData.timestamp,
+                  },
+                ],
+              };
+            } else if (conversation._id === newData.recipient._id) {
+              // If the user is the sender, also add the message to the recipient's conversation
               return {
                 ...conversation,
                 conversation: [
@@ -69,14 +86,26 @@ const getChatMsg = (dispatch) => async () => {
   //console.log(res.data);
   dispatch({ type: "getchatMsg", payload: [...res.data] });
 };
-const newMsg = (dispatch) => (data) => {
-  console.log(data);
+const newMsg = (dispatch) => async (data) => {
+  //console.log(data);
+  const user = await AsyncStorage.getItem("userId");
   //console.log("***********************");
   const userId = data.sender._id;
-  dispatch({ type: "newMsg", payload: data });
+  dispatch({ type: "newMsg", payload: { data, user } });
+};
+const sendMsg = (dispatch) => async (receiver, msg) => {
+  //console.log(msg);
+  const socket = initializeSocket();
+  const sender = await AsyncStorage.getItem("userId");
+  socket.emit("chat message", {
+    receiver,
+    sender,
+    msg,
+    isReply: true,
+  });
 };
 export const { Context, Provider } = createDataContext(
   chatReducer,
-  { getChatMsg, newMsg },
+  { getChatMsg, newMsg, sendMsg },
   { chat: null }
 );
