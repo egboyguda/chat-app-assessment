@@ -10,6 +10,7 @@ const authReducer = (state, action) => {
         ...state,
         token: action.payload.token,
         userId: action.payload.userId,
+        username: action.payload.username,
       };
     case "restore":
       return { ...state, token: action.payload, isSignIn: true };
@@ -26,9 +27,23 @@ const signIn =
   (dispatch) =>
   async ({ username, password }) => {
     const res = await url.post("/login", { username, password });
+
     await AsyncStorage.setItem("token", res.data.token);
     await AsyncStorage.setItem("userId", res.data.userId);
     console.log(res.data);
+    dispatch({ type: "sign", payload: res.data });
+
+    navigate("TabStack");
+  };
+
+const register =
+  (dispatch) =>
+  async ({ username, password }) => {
+    const res = await url.post("/register", { username, password });
+    await AsyncStorage.setItem("token", res.data.token);
+    await AsyncStorage.setItem("userId", res.data.userId);
+    await AsyncStorage.setItem("username", res.data.username);
+
     dispatch({ type: "sign", payload: res.data });
 
     navigate("TabStack");
@@ -44,6 +59,6 @@ const logout = (dispatch) => async () => {
 };
 export const { Context, Provider } = createDataContext(
   authReducer,
-  { signIn, restoreToken, logout },
-  { token: null, errorMsg: "", isSignIn: false, userId: null }
+  { signIn, restoreToken, logout, register },
+  { token: null, errorMsg: "", isSignIn: false, userId: null, username: null }
 );

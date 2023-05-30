@@ -38,7 +38,11 @@ const MainScreen = ({ navigation }) => {
           keyExtractor={(item) => item}
           renderItem={({ item }) => (
             <ChatMsg
-              item={chat[item].conversation[0].sender}
+              item={
+                chat[item].conversation[0].sender !== state.username
+                  ? chat[item].conversation[0].sender
+                  : chat[item].conversation[0].recipient
+              }
               msg={
                 chat[item].conversation[chat[item].conversation.length - 1]
                   .message

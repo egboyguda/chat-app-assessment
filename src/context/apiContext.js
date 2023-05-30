@@ -40,7 +40,7 @@ const chatReducer = (state, action) => {
                   },
                 ],
               };
-            } else if (conversation._id === newData.recipient._id) {
+            } else if (conversation._id === newData.sender.username) {
               // If the user is the sender, also add the message to the recipient's conversation
               return {
                 ...conversation,
@@ -102,11 +102,8 @@ const getChatMsg = (dispatch) => async () => {
 };
 
 const newMsg = (dispatch) => async (data) => {
-  //console.log(data);
-  const user = await AsyncStorage.getItem("userId");
-  //console.log("***********************");
-  const userId = data.sender._id;
-  dispatch({ type: "newMsg", payload: { data, user } });
+  console.log(data);
+  dispatch({ type: "newMsg", payload: { data } });
 };
 
 const sendMsg = (dispatch) => async (receiver, msg) => {
@@ -117,7 +114,7 @@ const sendMsg = (dispatch) => async (receiver, msg) => {
     receiver,
     sender,
     msg,
-    isReply: true,
+    //isReply: true,
   });
 };
 export const { Context, Provider } = createDataContext(

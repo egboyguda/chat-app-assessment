@@ -1,9 +1,13 @@
-import React from "react";
+import React, { useContext, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Image, Text } from "react-native";
 import { Input } from "@rneui/themed";
+import { Context as authContext } from "../context/authContext";
 import { Button } from "@rneui/base";
 const RegisterScreen = () => {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const { register } = useContext(authContext);
   return (
     <SafeAreaView
       style={{
@@ -31,7 +35,9 @@ const RegisterScreen = () => {
           borderBottomWidth: 0,
           //paddingTop: 10,
         }}
-
+        onChangeText={(val) => {
+          setUsername(val);
+        }}
         //inputStyle={{ textAlignVertical: "center" }}
       />
       <Input
@@ -47,7 +53,9 @@ const RegisterScreen = () => {
           borderBottomWidth: 0,
           //paddingTop: 10,
         }}
-
+        onChangeText={(val) => {
+          setPassword(val);
+        }}
         //inputStyle={{ textAlignVertical: "center" }}
       />
       <Input
@@ -72,6 +80,9 @@ const RegisterScreen = () => {
           width: "80%",
           borderRadius: 30,
           marginVertical: 5,
+        }}
+        onPress={() => {
+          register({ username, password });
         }}
       />
     </SafeAreaView>
