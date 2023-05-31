@@ -13,7 +13,7 @@ import ChatMsg from "../components/chatMsg";
 import { Context as ApiContext } from "../context/apiContext";
 const SearchScreen = () => {
   const [searchText, setSearchText] = useState("");
-  const [searchResults, setSearchResults] = useState([]);
+  const [searchResults, setSearchResults] = useState(null);
   const { addContact } = useContext(ApiContext);
 
   const handleSearch = async () => {
