@@ -15,7 +15,7 @@ const chatReducer = (state, action) => {
       };
     case "newMsg":
       const newData = action.payload.data;
-
+      const user = action.payload.user;
       const conversationIndex = state.chat.findIndex(
         (conversation) =>
           conversation._id === newData.sender._id ||
@@ -61,7 +61,10 @@ const chatReducer = (state, action) => {
       } else {
         // If the conversation does not exist, create a new entry
         const newConversation = {
-          _id: newData.sender._id,
+          _id:
+            newData.sender._id === user
+              ? newData.recipient._id
+              : newData.sender._id,
           conversation: [
             {
               sender: newData.sender.username,
@@ -102,8 +105,10 @@ const getChatMsg = (dispatch) => async () => {
 };
 
 const newMsg = (dispatch) => async (data) => {
-  console.log(data);
-  dispatch({ type: "newMsg", payload: { data } });
+  //console.log(data);
+  user = await AsyncStorage.getItem("userId");
+  //console.log(user);
+  dispatch({ type: "newMsg", payload: { data, user } });
 };
 
 const sendMsg = (dispatch) => async (receiver, msg) => {

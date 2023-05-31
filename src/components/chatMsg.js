@@ -8,7 +8,7 @@ const ChatMsg = ({ item, msg, chatmsg, isContact, isAdd, add, isCon }) => {
   return (
     <TouchableOpacity
       onPress={() => {
-        !isAdd ? navigate("ChatBox", { msg: chatmsg }) : add();
+        !isAdd ? navigate("ChatBox", { msg: chatmsg, isContact }) : add();
       }}
     >
       <ListItem key={item} bottomDivider>

@@ -4,6 +4,7 @@ import { Input, Button } from "@rneui/themed";
 import { Ionicons } from "@expo/vector-icons";
 import Bubble from "../components/bubble";
 
+import { navigate } from "../navigationRes";
 import { Context as ApiContext } from "../context/apiContext";
 import { Context as AuthContext } from "../context/authContext";
 
@@ -16,7 +17,7 @@ const ChatBox = ({ route }) => {
     state: { chat },
     sendMsg,
   } = useContext(ApiContext);
-  const { msg } = route.params;
+  const { msg, isContact } = route.params;
 
   return (
     <View style={styles.container}>
@@ -49,8 +50,9 @@ const ChatBox = ({ route }) => {
         <Button
           title="Send"
           onPress={() => {
-            sendMsg(msg, reply);
+            sendMsg(msg, reply, isContact);
             setReply("");
+            isContact ? navigate("Chat") : null;
           }}
         />
       </View>
