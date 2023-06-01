@@ -25,7 +25,11 @@ REACT NATIVE
 
 ![image](https://github.com/egboyguda/chat-app-assessment/assets/14038474/4cfc0c00-9a6e-48fb-8b6c-ec1ed7035079)
 
-![image](https://github.com/egboyguda/chat-app-assessment/assets/14038474/c947f885-eeef-4bd2-9491-1fd151a41d04) 6. open again the terminal type npm start to run the code 7. scan the qrcode with the expo app to open to your mobile phone
+![image](https://github.com/egboyguda/chat-app-assessment/assets/14038474/c947f885-eeef-4bd2-9491-1fd151a41d04)
+
+6. open again the terminal type npm start to run the code
+
+7. scan the qrcode with the expo app to open to your mobile phone
 
 ![image](https://github.com/egboyguda/chat-app-assessment/assets/14038474/cc5408f9-c69c-4577-a604-c7773a3f46f7)
 
