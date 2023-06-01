@@ -59,6 +59,7 @@ const MainScreen = ({ navigation }) => {
                   .message
               }
               chatmsg={chat[item]._id}
+              isInbox={true}
             />
           )}
         />

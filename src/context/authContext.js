@@ -17,7 +17,13 @@ const authReducer = (state, action) => {
     case "addErr":
       return { ...state, errorMsg: action.payload };
     case "signout":
-      return { ...state, token: null, isSignIn: false };
+      return {
+        ...state,
+        token: null,
+
+        userId: null,
+        username: null,
+      };
     default:
       return state;
   }
@@ -26,14 +32,18 @@ const authReducer = (state, action) => {
 const signIn =
   (dispatch) =>
   async ({ username, password }) => {
-    const res = await url.post("/login", { username, password });
+    try {
+      const res = await url.post("/login", { username, password });
+      console.log(res.data);
+      await AsyncStorage.setItem("token", res.data.token);
+      await AsyncStorage.setItem("userId", res.data.userId);
 
-    await AsyncStorage.setItem("token", res.data.token);
-    await AsyncStorage.setItem("userId", res.data.userId);
-    console.log(res.data);
-    dispatch({ type: "sign", payload: res.data });
+      dispatch({ type: "sign", payload: res.data });
 
-    navigate("TabStack");
+      navigate("TabStack");
+    } catch (error) {
+      dispatch({ type: "addError", payload: "Invalid username or password." });
+    }
   };
 
 const register =
@@ -48,6 +58,17 @@ const register =
 
     navigate("TabStack");
   };
+const checkToken = (dispatch) => async () => {
+  try {
+    const res = await url.get("/check");
+    if (res.status !== 401) {
+      navigate("TabStack");
+    }
+  } catch (error) {
+    await AsyncStorage.removeItem("token");
+    navigate("LoginStack");
+  }
+};
 
 const restoreToken = (dispatch) => (token) => {
   dispatch({ type: "restore", payload: token });
@@ -59,6 +80,6 @@ const logout = (dispatch) => async () => {
 };
 export const { Context, Provider } = createDataContext(
   authReducer,
-  { signIn, restoreToken, logout, register },
+  { signIn, restoreToken, logout, register, checkToken },
   { token: null, errorMsg: "", isSignIn: false, userId: null, username: null }
 );

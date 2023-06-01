@@ -58,6 +58,9 @@ const LoginScreen = ({ navigation }) => {
         secureTextEntry
         //inputStyle={{ textAlignVertical: "center" }}
       />
+      {state.errorMsg !== "" && (
+        <Text style={styles.error}>{state.errorMsg}</Text>
+      )}
       <Button
         title={"Login"}
         containerStyle={{
@@ -81,4 +84,10 @@ const LoginScreen = ({ navigation }) => {
     </SafeAreaView>
   );
 };
+const styles = StyleSheet.create({
+  error: {
+    color: "red",
+    marginVertical: 10,
+  },
+});
 export default LoginScreen;

@@ -80,6 +80,12 @@ const chatReducer = (state, action) => {
           chat: [...state.chat, newConversation],
         };
       }
+    case "deleteCon":
+      console.log(action.payload.id);
+      return {
+        ...state,
+        chat: state.chat.filter((item) => item._id !== action.payload.id),
+      };
 
     default:
       return state;
@@ -98,12 +104,26 @@ const getContact = (dispatch) => async () => {
   dispatch({ type: "getContact", payload: res.data });
 };
 const getChatMsg = (dispatch) => async () => {
-  const user = await AsyncStorage.getItem("userId");
-  const res = await url.get(`/chat?user=${user}`);
-  //console.log(res.data);
-  dispatch({ type: "getchatMsg", payload: [...res.data] });
+  try {
+    const res = await url.get(`/chat`);
+    if (res.status === 401) {
+      navigate("Login");
+    }
+    dispatch({ type: "getchatMsg", payload: [...res.data] });
+  } catch (error) {
+    console.log(error);
+  }
 };
 
+const deleteConvo = (dispatch) => async (id) => {
+  console.log(id);
+  await url.delete("/chat/del", {
+    data: {
+      id: id,
+    },
+  });
+  dispatch({ type: "deleteCon", payload: { id } });
+};
 const newMsg = (dispatch) => async (data) => {
   //console.log(data);
   user = await AsyncStorage.getItem("userId");
@@ -124,6 +144,6 @@ const sendMsg = (dispatch) => async (receiver, msg) => {
 };
 export const { Context, Provider } = createDataContext(
   chatReducer,
-  { getChatMsg, newMsg, sendMsg, addContact, getContact },
+  { getChatMsg, newMsg, sendMsg, addContact, getContact, deleteConvo },
   { chat: null, contact: null }
 );
